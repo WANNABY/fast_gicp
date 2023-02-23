@@ -5,6 +5,7 @@
 
 #include <boost/filesystem.hpp>
 #include <fast_gicp/gicp/fast_gicp.hpp>
+#include <fast_gicp/gicp/fast_gicp_st.hpp>
 #include <fast_gicp/gicp/fast_vgicp.hpp>
 
 #ifdef USE_VGICP_CUDA
@@ -143,6 +144,7 @@ Eigen::Matrix4d align_points(
 
 using LsqRegistration = fast_gicp::LsqRegistration<pcl::PointXYZ, pcl::PointXYZ>;
 using FastGICP = fast_gicp::FastGICP<pcl::PointXYZ, pcl::PointXYZ>;
+using FastGICPSingleThread = fast_gicp::FastGICPSingleThread<pcl::PointXYZ, pcl::PointXYZ>;
 using FastVGICP = fast_gicp::FastVGICP<pcl::PointXYZ, pcl::PointXYZ>;
 #ifdef USE_VGICP_CUDA
 using FastVGICPCuda = fast_gicp::FastVGICPCuda<pcl::PointXYZ, pcl::PointXYZ>;
@@ -188,6 +190,13 @@ PYBIND11_MODULE(pygicp, m) {
     .def("set_correspondence_randomness", &FastGICP::setCorrespondenceRandomness)
     .def("set_max_correspondence_distance", &FastGICP::setMaxCorrespondenceDistance)
   ;
+
+  py::class_<FastGICPSingleThread, FastGICP, std::shared_ptr<FastGICPSingleThread>>(m, "FastGICPSingleThread")
+    .def(py::init())
+    .def("set_correspondence_randomness", &FastGICPSingleThread::setCorrespondenceRandomness)
+    .def("set_max_correspondence_distance", &FastGICPSingleThread::setMaxCorrespondenceDistance)
+  ;
+
 
   py::class_<FastVGICP, FastGICP, std::shared_ptr<FastVGICP>>(m, "FastVGICP")
     .def(py::init())
